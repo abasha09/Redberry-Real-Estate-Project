@@ -25,16 +25,11 @@
             height="18px"
           />2</span
         >
-        <span class="flex">
-          <img src="../assets/icons/size.png" width="16px" height="18px" />55
-          მ²</span
+        <span class="flex justify-center items-center gap-2">
+          <i class="pi pi-window-maximize"></i>55 მ²</span
         >
-        <span class="flex">
-          <img
-            src="../assets/icons/zipcode.png"
-            width="16px"
-            height="18px"
-          />0160</span
+        <span class="flex justify-center items-center gap-2">
+          <i class="pi pi-map-marker"></i>55 მ²</span
         >
       </div>
     </div>
