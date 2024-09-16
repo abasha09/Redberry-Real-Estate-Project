@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import AddAgentModal from "./AddAgentModal.vue";
 
 const currentOpenFilter = ref(null);
 
@@ -10,11 +11,25 @@ const toggleFilter = (filter) => {
     currentOpenFilter.value = filter;
   }
 };
+
+const isOpen = ref(false);
+
+function openModal() {
+  isOpen.value = true;
+}
+
+function closeModal() {
+  isOpen.value = false;
+}
 </script>
 
 <template>
+  <teleport to="body" v-if="isOpen">
+    <AddAgentModal :isOpen="isOpen" @close="closeModal" />
+  </teleport>
   <main
     class="flex justify-between gap-24 mx-28 p-2 border-solid border-2 rounded-lg"
+    id="homepage"
   >
     <!-- Region Filter -->
     <div class="flex gap-6">
@@ -221,6 +236,7 @@ const toggleFilter = (filter) => {
       </button>
       <button
         class="bg-white py-1 px-4 text-primary1 rounded-lg border-solid border-2"
+        @click="isOpen = true"
       >
         + აგენტის დამატება
       </button>

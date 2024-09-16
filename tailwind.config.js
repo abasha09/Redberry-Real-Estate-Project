@@ -15,6 +15,7 @@ export default {
         borderColor: "rgba(219, 219, 219, 1)",
         buttonColor: "rgba(103, 110, 118, 1)",
         fileColor: "rgba(45, 54, 72, 1)",
+        overlayBg: "rgba(0,0,0,0.3)",
       },
     },
     variants: {
