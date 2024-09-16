@@ -14,6 +14,7 @@ export default {
         primary2: "rgba(128, 138, 147, 1)",
         borderColor: "rgba(219, 219, 219, 1)",
         buttonColor: "rgba(103, 110, 118, 1)",
+        fileColor: "rgba(45, 54, 72, 1)",
       },
     },
     variants: {
