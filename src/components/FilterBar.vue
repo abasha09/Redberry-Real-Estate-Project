@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import AddAgentModal from "./AddAgentModal.vue";
+import { RouterLink } from "vue-router";
 
 const currentOpenFilter = ref(null);
 
@@ -231,9 +232,12 @@ function closeModal() {
       </section>
     </div>
     <div class="flex gap-4">
-      <button class="bg-primary1 py-1 px-4 text-white rounded-lg">
+      <RouterLink
+        to="/addlisting"
+        class="bg-primary1 py-1 px-4 text-white rounded-lg"
+      >
         + ლისტინგის დამატება
-      </button>
+      </RouterLink>
       <button
         class="bg-white py-1 px-4 text-primary1 rounded-lg border-solid border-2"
         @click="isOpen = true"
