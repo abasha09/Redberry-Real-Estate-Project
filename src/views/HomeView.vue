@@ -19,21 +19,24 @@ const toggleFilter = (filter) => {
 
 const isOpen = ref(false);
 
-function openModal() {
-  isOpen.value = true;
-}
-
 function closeModal() {
   isOpen.value = false;
 }
 
 const state = reactive({ regions: [], properties: [] });
+const selectedRegions = ref([]);
+const removeSelected = (regionName) => {
+  selectedRegions.value = selectedRegions.value.filter(
+    (selected) => selected !== regionName
+  );
+};
+
 const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
 
 const fetchRegions = async () => {
   try {
     const response = await axios.get(
-      "https://api.real-estate-manager.redberryinternship.ge/api/cities",
+      "https://api.real-estate-manager.redberryinternship.ge/api/regions",
       { headers: { Authorization: `Bearer ${token}` } }
     );
     state.regions = response.data;
@@ -69,7 +72,6 @@ onMounted(async () => {
     </teleport>
     <main
       class="flex justify-between gap-24 mx-28 p-2 border-solid border-2 rounded-lg"
-      id="homepage"
     >
       <!-- Region Filter -->
       <div class="flex gap-6">
@@ -96,8 +98,16 @@ onMounted(async () => {
             v-if="currentOpenFilter === 'region'"
           >
             <p class="absolute top-2 left-1">რეგიონის მიხედვით</p>
-            <label :for="region.id" v-for="region in state.regions"
-              ><input type="checkbox" :id="region.id" />
+            <label
+              :for="region.id"
+              v-for="region in state.regions"
+              :key="region.id"
+              ><input
+                type="checkbox"
+                :id="region.id"
+                :value="region.name"
+                v-model="selectedRegions"
+              />
               {{ region.name }}</label
             >
 
@@ -288,6 +298,19 @@ onMounted(async () => {
         </button>
       </div>
     </main>
+    <ul class="px-28 py-2">
+      <li
+        class="px-3 py-1 border-solid border-2 border-borderColor2 rounded-full inline"
+        v-for="selected in selectedRegions"
+        key="selected"
+      >
+        {{ selected }}
+        <i
+          class="pi pi-times text-xs cursor-pointer"
+          @click="removeSelected(selected)"
+        />
+      </li>
+    </ul>
     <section class="grid grid-cols-4 gap-5 p-10 px-28 flex-wrap">
       <Card :properties="state.properties" />
     </section>
