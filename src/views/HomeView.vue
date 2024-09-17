@@ -1,10 +1,11 @@
 <script setup>
-import Cards from "@/components/Cards.vue";
-
+import Card from "@/components/Card.vue";
+import axios from "axios";
 import { ref } from "vue";
 import AddAgentModal from "../components/AddAgentModal.vue";
 import { RouterLink } from "vue-router";
 import { onMounted } from "vue";
+import { reactive } from "vue";
 
 const currentOpenFilter = ref(null);
 
@@ -25,6 +26,40 @@ function openModal() {
 function closeModal() {
   isOpen.value = false;
 }
+
+const state = reactive({ regions: [], properties: [] });
+const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
+
+const fetchRegions = async () => {
+  try {
+    const response = await axios.get(
+      "https://api.real-estate-manager.redberryinternship.ge/api/cities",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    state.regions = response.data;
+    console.log(state.regions);
+  } catch (err) {
+    console.log("Something Went Wrong", err);
+  }
+};
+
+const fetchProperties = async () => {
+  try {
+    const response = await axios.get(
+      "https://api.real-estate-manager.redberryinternship.ge/api/real-estates",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    state.properties = response.data;
+    console.log(state.properties);
+  } catch (err) {
+    console.log("Something Went Wrong", err);
+  }
+};
+
+onMounted(async () => {
+  fetchRegions();
+  fetchProperties();
+});
 </script>
 
 <template>
@@ -61,8 +96,9 @@ function closeModal() {
             v-if="currentOpenFilter === 'region'"
           >
             <p class="absolute top-2 left-1">რეგიონის მიხედვით</p>
-            <label for="tbilisi"
-              ><input type="checkbox" id="tbilisi" /> თბილისი</label
+            <label :for="region.id" v-for="region in state.regions"
+              ><input type="checkbox" :id="region.id" />
+              {{ region.name }}</label
             >
 
             <button
@@ -252,6 +288,8 @@ function closeModal() {
         </button>
       </div>
     </main>
-    <Cards />
+    <section class="grid grid-cols-4 gap-5 p-10 px-28 flex-wrap">
+      <Card :properties="state.properties" />
+    </section>
   </main>
 </template>
