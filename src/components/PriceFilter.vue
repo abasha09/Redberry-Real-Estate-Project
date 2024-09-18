@@ -1,13 +1,17 @@
 <script setup>
-import { ref } from "vue";
+import { defineProps, defineEmits } from "vue";
 
-const currentOpenFilter = ref(null);
+const props = defineProps({
+  currentOpenFilter: String, // Expect currentOpenFilter as a String
+});
+
+const emit = defineEmits(["update:currentOpenFilter"]);
 
 const toggleFilter = (filter) => {
-  if (currentOpenFilter.value === filter) {
-    currentOpenFilter.value = null;
+  if (props.currentOpenFilter === filter) {
+    emit("update:currentOpenFilter", null);
   } else {
-    currentOpenFilter.value = filter;
+    emit("update:currentOpenFilter", filter);
   }
 };
 </script>
@@ -17,7 +21,7 @@ const toggleFilter = (filter) => {
     <button
       :class="[
         'p-1 rounded-md',
-        currentOpenFilter === 'price' ? 'bg-hoverColor' : 'bg-white',
+        props.currentOpenFilter === 'price' ? 'bg-hoverColor' : 'bg-white',
         'hover:bg-hoverColor',
       ]"
       @click="toggleFilter('price')"
@@ -25,7 +29,7 @@ const toggleFilter = (filter) => {
       საფასო კატეგორია
       <span
         v-html="
-          currentOpenFilter === 'price'
+          props.currentOpenFilter === 'price'
             ? '<i class=\'pi pi-angle-up\'></i>'
             : '<i class=\'pi pi-angle-down\'></i>'
         "
@@ -33,7 +37,7 @@ const toggleFilter = (filter) => {
     </button>
     <form
       class="absolute bg-white py-12 px-2 gap-6 flex flex-wrap w-[420px] border-solid border-2 rounded-lg mt-6"
-      v-if="currentOpenFilter === 'price'"
+      v-if="props.currentOpenFilter === 'price'"
     >
       <p class="font-bold absolute top-2 left-3">ფასის მიხედვით</p>
       <div class="flex gap-6">
@@ -69,6 +73,7 @@ const toggleFilter = (filter) => {
       </div>
       <button
         class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3"
+        type="button"
       >
         არჩევა
       </button>

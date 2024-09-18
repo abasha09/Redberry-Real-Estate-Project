@@ -1,14 +1,17 @@
 <script setup>
-import { ref } from "vue";
+const props = defineProps({
+  currentOpenFilter: String,
+});
 
-const currentOpenFilter = ref(null);
+const emit = defineEmits(["update:currentOpenFilter"]);
 
 const toggleFilter = (filter) => {
-  if (currentOpenFilter.value === filter) {
-    currentOpenFilter.value = null;
+  if (props.currentOpenFilter === filter) {
+    emit("update:currentOpenFilter", null);
   } else {
-    currentOpenFilter.value = filter;
+    emit("update:currentOpenFilter", filter);
   }
+  console.log("Current Open Filter:", props.currentOpenFilter);
 };
 </script>
 
@@ -17,7 +20,7 @@ const toggleFilter = (filter) => {
     <button
       :class="[
         'p-1 rounded-md',
-        currentOpenFilter === 'room' ? 'bg-hoverColor' : 'bg-white',
+        props.currentOpenFilter === 'room' ? 'bg-hoverColor' : 'bg-white',
         'hover:bg-hoverColor',
       ]"
       @click="toggleFilter('room')"
@@ -25,7 +28,7 @@ const toggleFilter = (filter) => {
       საძინებლის რაოდენობა
       <span
         v-html="
-          currentOpenFilter === 'room'
+          props.currentOpenFilter === 'room'
             ? '<i class=\'pi pi-angle-up\'></i>'
             : '<i class=\'pi pi-angle-down\'></i>'
         "
@@ -33,7 +36,7 @@ const toggleFilter = (filter) => {
     </button>
     <form
       class="absolute bg-white py-12 px-2 gap-6 flex flex-wrap w-[260px] h-[200px] border-solid border-2 rounded-lg mt-6"
-      v-if="currentOpenFilter === 'room'"
+      v-if="props.currentOpenFilter === 'room'"
     >
       <p class="font-bold absolute top-4 left-5">საძინებლების რაოდენობა</p>
       <input

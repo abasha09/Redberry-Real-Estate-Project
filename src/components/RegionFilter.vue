@@ -1,17 +1,34 @@
 <script setup>
-import { ref } from "vue";
+const props = defineProps({
+  regions: Array,
+  currentOpenFilter: String,
+  selectedRegions: Array,
+});
 
-const currentOpenFilter = ref(null);
+const emit = defineEmits([
+  "update:currentOpenFilter",
+  "update:selectedRegions",
+]);
 
 const toggleFilter = (filter) => {
-  if (currentOpenFilter.value === filter) {
-    currentOpenFilter.value = null;
+  if (props.currentOpenFilter === filter) {
+    emit("update:currentOpenFilter", null);
   } else {
-    currentOpenFilter.value = filter;
+    emit("update:currentOpenFilter", filter);
   }
+  console.log("Current Open Filter:", props.currentOpenFilter);
 };
 
-defineProps({ regions: Array });
+const handleCheckboxChange = (event, regionName) => {
+  if (event.target.checked) {
+    emit("update:selectedRegions", [...props.selectedRegions, regionName]);
+  } else {
+    emit(
+      "update:selectedRegions",
+      props.selectedRegions.filter((r) => r !== regionName)
+    );
+  }
+};
 </script>
 
 <template>
@@ -19,7 +36,7 @@ defineProps({ regions: Array });
     <button
       :class="[
         'p-1 rounded-md',
-        currentOpenFilter === 'region' ? 'bg-hoverColor' : 'bg-white',
+        props.currentOpenFilter === 'region' ? 'bg-hoverColor' : 'bg-white',
         'hover:bg-hoverColor',
       ]"
       @click="toggleFilter('region')"
@@ -27,7 +44,7 @@ defineProps({ regions: Array });
       რეგიონი
       <span
         v-html="
-          currentOpenFilter === 'region'
+          props.currentOpenFilter === 'region'
             ? '<i class=\'pi pi-angle-up\'></i>'
             : '<i class=\'pi pi-angle-down\'></i>'
         "
@@ -35,21 +52,24 @@ defineProps({ regions: Array });
     </button>
     <form
       class="absolute bg-white py-12 px-2 gap-6 flex flex-wrap w-[600px] border-solid border-2 rounded-lg mt-6"
-      v-if="currentOpenFilter === 'region'"
+      v-if="props.currentOpenFilter === 'region'"
     >
       <p class="absolute top-2 left-1">რეგიონის მიხედვით</p>
-      <label :for="region.id" v-for="region in regions" :key="region.id"
+      <label :for="region.id" v-for="region in props.regions" :key="region.id"
         ><input
           type="checkbox"
           :id="region.id"
           :value="region.name"
-          v-model="selectedRegions"
+          :checked="props.selectedRegions.includes(region.name)"
+          @change="handleCheckboxChange($event, region.name)"
         />
         {{ region.name }}</label
       >
 
       <button
         class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3"
+        type="button"
+        @click="$emit('applyFilter')"
       >
         არჩევა
       </button>

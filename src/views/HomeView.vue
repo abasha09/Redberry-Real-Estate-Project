@@ -13,14 +13,6 @@ import RoomFilter from "@/components/RoomFilter.vue";
 
 const currentOpenFilter = ref(null);
 
-const toggleFilter = (filter) => {
-  if (currentOpenFilter.value === filter) {
-    currentOpenFilter.value = null;
-  } else {
-    currentOpenFilter.value = filter;
-  }
-};
-
 const isOpen = ref(false);
 
 function closeModal() {
@@ -79,16 +71,31 @@ onMounted(async () => {
     >
       <!-- Region Filter -->
       <div class="flex gap-6">
-        <RegionFilter :regions="state.regions" />
+        <RegionFilter
+          :regions="state.regions"
+          :currentOpenFilter="currentOpenFilter"
+          :selectedRegions="selectedRegions"
+          @update:currentOpenFilter="currentOpenFilter = $event"
+          @update:selectedRegions="selectedRegions = $event"
+        />
 
         <!-- Price Filter -->
-        <PriceFilter />
+        <PriceFilter
+          :currentOpenFilter="currentOpenFilter"
+          @update:currentOpenFilter="currentOpenFilter = $event"
+        />
 
         <!-- Size Filter -->
-        <AreaFilter />
+        <AreaFilter
+          :currentOpenFilter="currentOpenFilter"
+          @update:currentOpenFilter="currentOpenFilter = $event"
+        />
 
         <!-- Room Filter -->
-        <RoomFilter />
+        <RoomFilter
+          :currentOpenFilter="currentOpenFilter"
+          @update:currentOpenFilter="currentOpenFilter = $event"
+        />
       </div>
       <div class="flex gap-4">
         <RouterLink
