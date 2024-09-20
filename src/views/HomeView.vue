@@ -16,7 +16,7 @@ const isOpen = ref(false);
 function closeModal() {
   isOpen.value = false;
 }
-const selectedRegions = ref([]);
+const selectedOptions = ref([]);
 const fetchedProperties = ref([]);
 const fetchedRegions = ref([]);
 const filteredProperties = ref([]);
@@ -27,8 +27,8 @@ const bedroomsCount = ref(null);
 const filterProperties = () => {
   filteredProperties.value = fetchedProperties.value.filter((item) => {
     const withinRegion =
-      !selectedRegions.value.length ||
-      selectedRegions.value.includes(item.city.region.name);
+      !selectedOptions.value.length ||
+      selectedOptions.value.includes(item.city.region.name);
     const withinPriceRange =
       (priceRange.value.min === null || item.price >= priceRange.value.min) &&
       (priceRange.value.max === null || item.price <= priceRange.value.max);
@@ -44,7 +44,7 @@ const filterProperties = () => {
   });
 };
 
-watch(selectedRegions, () => {
+watch(selectedOptions, () => {
   filterProperties();
 });
 
@@ -74,7 +74,7 @@ const updateBedroomsCount = (value) => {
 };
 
 const removeSelected = (regionName) => {
-  selectedRegions.value = selectedRegions.value.filter(
+  selectedOptions.value = selectedOptions.value.filter(
     (selected) => selected !== regionName
   );
 };
@@ -126,9 +126,9 @@ onMounted(async () => {
         <RegionFilter
           :regions="fetchedRegions"
           :currentOpenFilter="currentOpenFilter"
-          :selectedRegions="selectedRegions"
+          :selectedOptions="selectedOptions"
           @update:currentOpenFilter="currentOpenFilter = $event"
-          @update:selectedRegions="selectedRegions = $event"
+          @update:selectedOptions="selectedOptions = $event"
           :filterProperties="filterProperties"
         />
 
@@ -171,7 +171,7 @@ onMounted(async () => {
     <ul class="px-28 py-2">
       <li
         class="px-3 py-1 border-solid border-2 border-borderColor2 rounded-full inline"
-        v-for="selected in selectedRegions"
+        v-for="selected in selectedOptions"
         key="selected"
       >
         {{ selected }}

@@ -4,16 +4,16 @@ import { ref } from "vue";
 const props = defineProps({
   regions: Array,
   currentOpenFilter: String,
-  selectedRegions: Array,
+  selectedOptions: Array,
   filterProperties: Function,
 });
 
 const emit = defineEmits([
   "update:currentOpenFilter",
-  "update:selectedRegions",
+  "update:selectedOptions",
 ]);
 
-const localSelectedRegions = ref([...props.selectedRegions]);
+const localSelectedRegions = ref([...props.selectedOptions]);
 
 const toggleFilter = (filter) => {
   if (props.currentOpenFilter === filter) {
@@ -34,7 +34,7 @@ const handleCheckboxChange = (event, regionName) => {
 };
 
 const applyFilter = () => {
-  emit("update:selectedRegions", [...localSelectedRegions.value]);
+  emit("update:selectedOptions", [...localSelectedRegions.value]);
   props.filterProperties();
 };
 </script>
