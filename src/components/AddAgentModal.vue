@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({

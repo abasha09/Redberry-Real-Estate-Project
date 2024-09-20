@@ -20,6 +20,9 @@ function closeModal() {
   isOpen.value = false;
 }
 const selectedRegions = ref([]);
+const fetchedProperties = ref([]);
+const fetchedRegions = ref([]);
+const filteredProperties = ref([]);
 
 const state = reactive({
   regions: [],
@@ -31,7 +34,7 @@ const state = reactive({
 // const filteredData = ref([]);
 
 const filterProperties = () => {
-  state.filteredProperties = state.properties.filter((item) => {
+  filteredProperties.value = fetchedProperties.value.filter((item) => {
     return (
       !selectedRegions.value.length ||
       selectedRegions.value.includes(item.city.region.name)
@@ -58,7 +61,7 @@ const fetchRegions = async () => {
       "https://api.real-estate-manager.redberryinternship.ge/api/regions",
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    state.regions = response.data;
+    fetchedRegions.value = response.data;
   } catch (err) {
     console.log("Something Went Wrong", err);
   }
@@ -70,7 +73,7 @@ const fetchProperties = async () => {
       "https://api.real-estate-manager.redberryinternship.ge/api/real-estates",
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    state.properties = response.data;
+    fetchedProperties.value = response.data;
   } catch (err) {
     console.log("Something Went Wrong", err);
   } finally {
@@ -95,7 +98,7 @@ onMounted(async () => {
       <!-- Region Filter -->
       <div class="flex gap-6">
         <RegionFilter
-          :regions="state.regions"
+          :regions="fetchedRegions"
           :currentOpenFilter="currentOpenFilter"
           :selectedRegions="selectedRegions"
           @update:currentOpenFilter="currentOpenFilter = $event"
@@ -151,7 +154,7 @@ onMounted(async () => {
     </ul>
     <section class="grid grid-cols-4 gap-5 p-10 px-28">
       <PropertyCard
-        v-for="property in state.filteredProperties"
+        v-for="property in filteredProperties"
         :key="property.id"
         :property="property"
       ></PropertyCard>
