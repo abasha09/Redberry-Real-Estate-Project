@@ -1,6 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
-
 const props = defineProps({
   currentOpenFilter: String, // Expect currentOpenFilter as a String
 });

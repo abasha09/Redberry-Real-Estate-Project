@@ -10,6 +10,7 @@ import RegionFilter from "@/components/RegionFilter.vue";
 import PriceFilter from "@/components/PriceFilter.vue";
 import AreaFilter from "@/components/AreaFilter.vue";
 import RoomFilter from "@/components/RoomFilter.vue";
+import { watch } from "vue";
 
 const currentOpenFilter = ref(null);
 
@@ -18,9 +19,25 @@ const isOpen = ref(false);
 function closeModal() {
   isOpen.value = false;
 }
-
-const state = reactive({ regions: [], properties: [] });
 const selectedRegions = ref([]);
+
+const state = reactive({ regions: [], properties: [], filteredProperties: [] });
+
+const apiData = ref([]);
+const filteredData = ref([]);
+
+const filterProperties = () => {
+  filteredData.value = apiData.value.filter((item) => {
+    return selectedRegions.value.includes(item.city.region.name);
+  });
+  console.log(filteredData);
+};
+
+watch(selectedRegions, () => {
+  filterProperties();
+});
+
+console.log(selectedRegions, "selected Regions");
 const removeSelected = (regionName) => {
   selectedRegions.value = selectedRegions.value.filter(
     (selected) => selected !== regionName
@@ -36,7 +53,6 @@ const fetchRegions = async () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     state.regions = response.data;
-    console.log(state.regions);
   } catch (err) {
     console.log("Something Went Wrong", err);
   }
@@ -48,10 +64,14 @@ const fetchProperties = async () => {
       "https://api.real-estate-manager.redberryinternship.ge/api/real-estates",
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    state.properties = response.data;
+    // state.properties = response.data;
+    apiData.value = response.data;
     console.log(state.properties);
   } catch (err) {
     console.log("Something Went Wrong", err);
+  } finally {
+    console.log("text");
+    filterProperties();
   }
 };
 
@@ -77,6 +97,7 @@ onMounted(async () => {
           :selectedRegions="selectedRegions"
           @update:currentOpenFilter="currentOpenFilter = $event"
           @update:selectedRegions="selectedRegions = $event"
+          :filterProperties="filterProperties"
         />
 
         <!-- Price Filter -->
@@ -126,7 +147,41 @@ onMounted(async () => {
       </li>
     </ul>
     <section class="grid grid-cols-4 gap-5 p-10 px-28 flex-wrap">
-      <Card :properties="state.properties" />
+      <section
+        class="flex flex-col gap-5 border-solid border-2 w-[384px] h-[455px] rounded-xl cursor-pointer"
+        v-for="property in filteredData"
+        :key="property.id"
+      >
+        <img
+          class="rounded-t-xl"
+          width="384px"
+          height="307px"
+          :src="`${property.image}`"
+        />
+        <div class="flex flex-col gap-5 px-4">
+          <p class="text-3xl">{{ property.price }}$</p>
+          <p class="flex text-base">
+            <img src="../assets/icons/location-marker.png" />{{
+              property.city.name
+            }}, {{ property.address }}
+          </p>
+
+          <div class="flex gap-8">
+            <span class="flex gap-2">
+              <img src="../assets/icons/bed.png" width="16px" height="18px" />{{
+                property.bedrooms
+              }}</span
+            >
+            <span class="flex justify-center items-center gap-2">
+              <i class="pi pi-window-maximize"></i>{{ property.area }} მ²</span
+            >
+            <span class="flex justify-center items-center gap-2">
+              <i class="pi pi-map-marker"></i>{{ property.zip_code }}</span
+            >
+          </div>
+        </div>
+      </section>
+      <!-- <Card :properties="state.filteredProperties" /> -->
     </section>
   </main>
 </template>
