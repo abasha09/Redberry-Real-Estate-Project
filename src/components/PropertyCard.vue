@@ -1,14 +1,12 @@
 <script setup>
 defineProps({
-  properties: Array,
+  property: Object,
 });
 </script>
 
 <template>
   <section
     class="flex flex-col gap-5 border-solid border-2 w-[384px] h-[455px] rounded-xl cursor-pointer"
-    v-for="property in properties"
-    :key="property.id"
   >
     <img
       class="rounded-t-xl"
