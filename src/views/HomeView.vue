@@ -1,16 +1,13 @@
 <script setup>
-import PropertyCard from "@/components/PropertyCard.vue";
-import axios from "axios";
-import { ref } from "vue";
-import AddAgentModal from "@/components/AddAgentModal.vue";
+import { ref, watch, onMounted } from "vue";
 import { RouterLink } from "vue-router";
-import { onMounted } from "vue";
-import { reactive } from "vue";
+import axios from "axios";
+import AddAgentModal from "@/components/AddAgentModal.vue";
+import PropertyCard from "@/components/PropertyCard.vue";
 import RegionFilter from "@/components/RegionFilter.vue";
 import PriceFilter from "@/components/PriceFilter.vue";
 import AreaFilter from "@/components/AreaFilter.vue";
 import RoomFilter from "@/components/RoomFilter.vue";
-import { watch } from "vue";
 
 const currentOpenFilter = ref(null);
 
@@ -23,21 +20,26 @@ const selectedRegions = ref([]);
 const fetchedProperties = ref([]);
 const fetchedRegions = ref([]);
 const filteredProperties = ref([]);
-
-const state = reactive({
-  regions: [],
-  properties: [],
-  filteredProperties: [],
-});
-
-// const apiData = ref([]);
-// const filteredData = ref([]);
+const priceRange = ref({ min: null, max: null });
+const areaRange = ref({ min: null, max: null });
+const bedroomsCount = ref(null);
 
 const filterProperties = () => {
   filteredProperties.value = fetchedProperties.value.filter((item) => {
-    return (
+    const withinRegion =
       !selectedRegions.value.length ||
-      selectedRegions.value.includes(item.city.region.name)
+      selectedRegions.value.includes(item.city.region.name);
+    const withinPriceRange =
+      (priceRange.value.min === null || item.price >= priceRange.value.min) &&
+      (priceRange.value.max === null || item.price <= priceRange.value.max);
+    const withinAreaRange =
+      (areaRange.value.min === null || item.area >= areaRange.value.min) &&
+      (areaRange.value.max === null || item.area <= areaRange.value.max);
+    const withinBedrooms =
+      bedroomsCount.value === null ||
+      item.bedrooms === parseInt(bedroomsCount.value);
+    return (
+      withinRegion && withinAreaRange && withinPriceRange && withinBedrooms
     );
   });
 };
@@ -46,7 +48,31 @@ watch(selectedRegions, () => {
   filterProperties();
 });
 
-console.log(selectedRegions, "selected Regions");
+watch(priceRange, () => {
+  filterProperties();
+});
+
+watch(areaRange, () => {
+  filterProperties();
+});
+
+watch(bedroomsCount, () => {
+  filterProperties();
+});
+const updatePriceRange = (range) => {
+  priceRange.value = range;
+  filterProperties();
+};
+
+const updateAreaRange = (range) => {
+  areaRange.value = range;
+  filterProperties();
+};
+
+const updateBedroomsCount = (value) => {
+  bedroomsCount.value = value;
+};
+
 const removeSelected = (regionName) => {
   selectedRegions.value = selectedRegions.value.filter(
     (selected) => selected !== regionName
@@ -110,18 +136,21 @@ onMounted(async () => {
         <PriceFilter
           :currentOpenFilter="currentOpenFilter"
           @update:currentOpenFilter="currentOpenFilter = $event"
+          @update:priceRange="updatePriceRange"
         />
 
         <!-- Size Filter -->
         <AreaFilter
           :currentOpenFilter="currentOpenFilter"
           @update:currentOpenFilter="currentOpenFilter = $event"
+          @update:areaRange="updateAreaRange"
         />
 
         <!-- Room Filter -->
         <RoomFilter
           :currentOpenFilter="currentOpenFilter"
           @update:currentOpenFilter="currentOpenFilter = $event"
+          @update:bedroomsCount="updateBedroomsCount"
         />
       </div>
       <div class="flex gap-4">

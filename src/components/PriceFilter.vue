@@ -1,9 +1,17 @@
 <script setup>
+import { ref } from "vue";
 const props = defineProps({
   currentOpenFilter: String, // Expect currentOpenFilter as a String
 });
 
-const emit = defineEmits(["update:currentOpenFilter"]);
+const emit = defineEmits(["update:currentOpenFilter", "update:priceRange"]);
+
+const minPrice = ref("");
+const maxPrice = ref("");
+
+const selectPriceRange = () => {
+  emit("update:priceRange", { min: minPrice.value, max: maxPrice.value });
+};
 
 const toggleFilter = (filter) => {
   if (props.currentOpenFilter === filter) {
@@ -44,6 +52,7 @@ const toggleFilter = (filter) => {
             class="border-solid border-2 p-2 rounded-lg border-inputBorderColor"
             type="text"
             placeholder="დან"
+            v-model="minPrice"
           />
           <div>
             <span class="font-bold">მინ. ფასი</span>
@@ -59,9 +68,10 @@ const toggleFilter = (filter) => {
             class="border-solid border-2 p-2 rounded-lg border-inputBorderColor"
             type="text"
             placeholder="მდე"
+            v-model="maxPrice"
           />
           <div>
-            <span class="font-bold">მინ. ფასი</span>
+            <span class="font-bold">მაქს. ფასი</span>
             <p>50,000 ₾</p>
             <p>100,000 ₾</p>
             <p>150,000 ₾</p>
@@ -72,6 +82,7 @@ const toggleFilter = (filter) => {
       <button
         class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3"
         type="button"
+        @click="selectPriceRange"
       >
         არჩევა
       </button>
