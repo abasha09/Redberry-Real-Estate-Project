@@ -6,6 +6,7 @@ const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
 
 const fetchedRegions = ref([]);
 const fetchedCities = ref([]);
+const fetchedAgents = ref([]);
 const listingOptions = ref(null);
 const listingAddress = ref("");
 const listingPostIndex = ref(null);
@@ -16,6 +17,7 @@ const listingArea = ref(null);
 const listingBedrooms = ref(null);
 const listingDescription = ref("");
 const errorMessage = ref("");
+const selectedAgent = ref(null);
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
@@ -56,6 +58,18 @@ const fetchCities = async () => {
   }
 };
 
+const fetchAgents = async () => {
+  try {
+    const response = await axios.get(
+      "https://api.real-estate-manager.redberryinternship.ge/api/agents",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    fetchedAgents.value = response.data;
+  } catch (err) {
+    console.log("Something Went Wrong", err);
+  }
+};
+
 const filteredCities = computed(() => {
   if (selectedRegion.value) {
     return fetchedCities.value.filter(
@@ -87,16 +101,14 @@ const validateForm = () => {
   return true;
 };
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
   event.preventDefault();
-  if (validateForm()) {
-    console.log("Form is valid! Submitting...");
-  }
 };
 
 onMounted(() => {
   fetchRegions();
   fetchCities();
+  fetchAgents();
 });
 </script>
 
@@ -242,7 +254,25 @@ onMounted(() => {
         />
       </div>
       <p class="text-sm" v-if="errorMessage">{{ errorMessage }}</p>
-      <div class="flex justify-end gap-5">
+      <h3 class="text-lg mb-4 mt-12">აგენტი</h3>
+
+      <div class="flex flex-col">
+        <p class="text-sm mb-2">აირჩიე</p>
+        <select
+          v-model="selectedAgent"
+          class="border-solid border-2 rounded-md p-3 w-[384px]"
+        >
+          <option
+            v-for="agent in fetchedAgents"
+            :key="agent.id"
+            :value="agent.name"
+          >
+            {{ agent.name }} {{ agent.surname }}
+          </option>
+        </select>
+      </div>
+
+      <div class="flex justify-end gap-5 py-5">
         <RouterLink
           to="/"
           class="text-primary1 px-2 py-2 border-solid border-2 rounded-lg border-primary1"
