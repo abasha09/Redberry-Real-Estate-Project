@@ -52,7 +52,7 @@ const toggleFilter = (filter) => {
         v-model="bedrooms"
       />
       <button
-        class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3"
+        class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3 hover:bg-hoverColor2"
         type="submit"
         @click="selectBedroomsCount"
       >

@@ -156,12 +156,12 @@ onMounted(async () => {
       <div class="flex gap-4">
         <RouterLink
           to="/addlisting"
-          class="bg-primary1 py-1 px-4 text-white rounded-lg"
+          class="bg-primary1 py-1 px-4 text-white rounded-lg hover:bg-hoverColor2"
         >
           + ლისტინგის დამატება
         </RouterLink>
         <button
-          class="bg-white py-1 px-4 text-primary1 rounded-lg border-solid border-2"
+          class="bg-white py-1 px-4 text-primary1 rounded-lg border-solid border-2 hover:bg-primary1 hover:text-white"
           @click="isOpen = true"
         >
           + აგენტის დამატება

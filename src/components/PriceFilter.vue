@@ -80,7 +80,7 @@ const toggleFilter = (filter) => {
         </div>
       </div>
       <button
-        class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3"
+        class="absolute right-3 bottom-3 bg-primary1 text-white rounded-lg py-1 px-3 hover:bg-hoverColor2"
         type="button"
         @click="selectPriceRange"
       >

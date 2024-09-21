@@ -17,6 +17,7 @@ export default {
         buttonColor: "rgba(103, 110, 118, 1)",
         fileColor: "rgba(45, 54, 72, 1)",
         overlayBg: "rgba(0,0,0,0.3)",
+        hoverColor2: "rgba(223, 48, 20, 1)",
       },
     },
     variants: {

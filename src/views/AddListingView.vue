@@ -322,12 +322,12 @@ onMounted(() => {
       <div class="flex justify-end gap-5 py-5">
         <RouterLink
           to="/"
-          class="text-primary1 px-2 py-2 border-solid border-2 rounded-lg border-primary1"
+          class="text-primary1 px-2 py-2 border-solid border-2 rounded-lg border-primary1 hover:bg-primary1 hover:text-white"
         >
           გაუქმება
         </RouterLink>
         <button
-          class="text-white px-2 py-2 border-solid border-2 rounded-lg bg-primary1"
+          class="text-white px-2 py-2 border-solid border-2 rounded-lg bg-primary1 hover:bg-hoverColor2"
           type="submit"
         >
           დამატე ლისტინგი
