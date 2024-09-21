@@ -98,6 +98,8 @@ const handleSubmit = async (e) => {
     console.log("Property added successfully:", response.data);
   } catch (err) {
     console.error("Error response:", err.response ? err.response.data : err);
+  } finally {
+    router.push("/");
   }
 };
 </script>

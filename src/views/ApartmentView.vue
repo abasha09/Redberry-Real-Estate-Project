@@ -44,10 +44,11 @@ const deleteProperty = async () => {
           },
         }
       );
-      router.push("/");
     }
   } catch (error) {
     console.log("Error deleting property", error);
+  } finally {
+    router.push("/");
   }
 };
 
