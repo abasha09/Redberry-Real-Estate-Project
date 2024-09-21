@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import axios from "axios";
 
 const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
@@ -18,6 +18,7 @@ const listingBedrooms = ref(null);
 const listingDescription = ref("");
 const errorMessage = ref("");
 const selectedAgent = ref(null);
+const selectedFile = ref(null);
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
@@ -29,6 +30,7 @@ const handleFileChange = (event) => {
       event.target.value = "";
     } else {
       console.log("File ready for upload:", file);
+      selectedFile.value = file;
       errorMessage.value = "";
     }
   }
@@ -70,6 +72,13 @@ const fetchAgents = async () => {
   }
 };
 
+watch(selectedRegion, () => {
+  console.log(selectedRegion.value);
+});
+watch(selectedCity, () => {
+  console.log(selectedCity.value);
+});
+
 const filteredCities = computed(() => {
   if (selectedRegion.value) {
     return fetchedCities.value.filter(
@@ -82,7 +91,6 @@ const filteredCities = computed(() => {
 const updateCities = () => {
   selectedCity.value = null;
 };
-
 const validateForm = () => {
   if (
     !listingAddress.value ||
@@ -92,7 +100,8 @@ const validateForm = () => {
     !listingPrice.value ||
     !listingArea.value ||
     !listingBedrooms.value ||
-    !listingDescription.value
+    !listingDescription.value ||
+    !selectedFile.value
   ) {
     errorMessage.value = "Please fill in all required fields.";
     return false;
@@ -101,8 +110,51 @@ const validateForm = () => {
   return true;
 };
 
+const generateRandomId = () => {
+  return Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+};
+
 const handleSubmit = async (event) => {
   event.preventDefault();
+
+  if (!validateForm()) {
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("address", listingAddress.value);
+  formData.append("zip_code", listingPostIndex.value);
+  formData.append("price", listingPrice.value);
+  formData.append("area", listingArea.value);
+  formData.append("description", listingDescription.value);
+  formData.append("bedrooms", listingBedrooms.value);
+  formData.append("is_rental", listingOptions.value === "forRent" ? "1" : "0");
+  formData.append("city_id", selectedCity.value);
+  formData.append("agent_id", selectedAgent.value);
+  formData.append("region_id", selectedRegion.value);
+
+  if (selectedFile.value) {
+    formData.append("image", selectedFile.value);
+  } else {
+    console.error("Image file is missing");
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      "https://api.real-estate-manager.redberryinternship.ge/api/real-estates",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("Property added successfully:", response.data);
+  } catch (err) {
+    console.error("Error response:", err.response ? err.response.data : err);
+  }
 };
 
 onMounted(() => {
@@ -119,22 +171,11 @@ onMounted(() => {
       <h3>გარიგების ტიპი</h3>
       <div class="flex gap-10">
         <label for="forSale">
-          <input
-            v-model="listingOptions"
-            checked
-            value="forSale"
-            type="radio"
-            id="checkbox1"
-          />
+          <input v-model="listingOptions" checked value="1" type="radio" />
           იყიდება
         </label>
         <label for="forRent">
-          <input
-            v-model="listingOptions"
-            type="radio"
-            value="forRent"
-            id="checkbox2"
-          />
+          <input v-model="listingOptions" type="radio" value="0" />
           ქირავდება
         </label>
       </div>
@@ -265,7 +306,7 @@ onMounted(() => {
           <option
             v-for="agent in fetchedAgents"
             :key="agent.id"
-            :value="agent.name"
+            :value="agent.id"
           >
             {{ agent.name }} {{ agent.surname }}
           </option>
