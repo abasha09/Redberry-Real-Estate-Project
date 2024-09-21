@@ -5,20 +5,22 @@ defineProps({
 </script>
 
 <template>
-  <section
+  <RouterLink
+    :to="'/real-estates/' + property.id"
     class="flex flex-col gap-5 border-solid border-2 w-[384px] h-[455px] rounded-xl cursor-pointer"
   >
     <img
       class="rounded-t-xl"
       width="384px"
       height="307px"
-      :src="`${property.image}`"
+      :src="property.image"
+      alt="Property Image"
     />
     <div class="flex flex-col gap-5 px-4">
       <p class="text-3xl">{{ property.price }}$</p>
       <p class="flex text-base">
         <img src="../assets/icons/location-marker.png" />{{
-          property.city.name
+          property.city?.name
         }}, {{ property.address }}
       </p>
 
@@ -36,5 +38,5 @@ defineProps({
         >
       </div>
     </div>
-  </section>
+  </RouterLink>
 </template>
