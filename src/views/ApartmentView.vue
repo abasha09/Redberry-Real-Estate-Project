@@ -9,6 +9,8 @@ const route = useRoute();
 
 const router = useRouter();
 
+const showModal = ref(false);
+
 const fetchedApartment = ref(null);
 
 const apartmentId = route.params.id;
@@ -33,18 +35,15 @@ const fetchApartment = async () => {
 
 const deleteProperty = async () => {
   try {
-    const confirm = window.confirm("გსურთ წაშალოთ ლისტინგი?");
-    if (confirm) {
-      await axios.delete(
-        `https://api.real-estate-manager.redberryinternship.ge/api/real-estates/${apartmentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            accept: "application/json",
-          },
-        }
-      );
-    }
+    await axios.delete(
+      `https://api.real-estate-manager.redberryinternship.ge/api/real-estates/${apartmentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          accept: "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.log("Error deleting property", error);
   } finally {
@@ -58,7 +57,34 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="px-28" v-if="fetchedApartment">
+  <main class="px-28 relative" v-if="fetchedApartment">
+    <teleport to="body" v-if="(showmodal = true)">
+      <div
+        class="absolute w-full h-full top-0 bg-overlayBg shadow-2xl flex justify-center items-center"
+        v-if="showModal"
+      >
+        <div
+          class="w-[623px] h-[222px] bg-white border-solid border-2 rounded-xl p-10 flex flex-col justify-center items-center gap-4"
+        >
+          <p class="text-xl">გსურთ წაშალოთ ლისტინგი?</p>
+          <div class="flex gap-5">
+            <button
+              class="text-primary1 px-2 py-2 border-solid border-2 border-primary1 rounded-lg bg-white"
+              @click="showModal = false"
+            >
+              გაუქმება
+            </button>
+            <button
+              class="text-white px-2 py-2 border-solid border-2 rounded-lg bg-primary1"
+              @click="deleteProperty"
+            >
+              დადასტურება
+            </button>
+          </div>
+        </div>
+      </div>
+    </teleport>
+
     <section class="flex items-center gap-10">
       <div class="relative">
         <RouterLink to="/"
@@ -118,7 +144,7 @@ onMounted(() => {
           </div>
           <button
             class="border-solid border-2 rounded-lg px-3 py-2 mt-20 text-buttonColor border-buttonColor"
-            @click="deleteProperty"
+            @click="showModal = true"
           >
             ლისტინგის წაშლა
           </button>
