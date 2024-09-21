@@ -23,6 +23,8 @@ const listingDescription = ref("");
 const errorMessage = ref("");
 const selectedAgent = ref(null);
 const selectedFile = ref(null);
+const isLoading = ref(false);
+const successMessage = ref("");
 
 const fetchRegions = async () => {
   try {
@@ -59,13 +61,6 @@ const fetchAgents = async () => {
     console.log("Something Went Wrong", err);
   }
 };
-
-watch(selectedRegion, () => {
-  console.log(selectedRegion.value);
-});
-watch(selectedCity, () => {
-  console.log(selectedCity.value);
-});
 
 const filteredCities = computed(() => {
   if (selectedRegion.value) {
@@ -126,6 +121,7 @@ const handleSubmit = async (event) => {
   }
 
   const formData = new FormData();
+  formData.append("id", generateRandomId());
   formData.append("address", listingAddress.value);
   formData.append("zip_code", listingPostIndex.value);
   formData.append("price", listingPrice.value);
@@ -155,11 +151,29 @@ const handleSubmit = async (event) => {
         },
       }
     );
+
+    listingAddress.value = "";
+    listingPostIndex.value = null;
+    selectedRegion.value = "";
+    selectedCity.value = "";
+    listingPrice.value = null;
+    listingArea.value = null;
+    listingBedrooms.value = null;
+    listingDescription.value = "";
+    selectedAgent.value = null;
+    selectedFile.value = null;
+
+    successMessage.value = "Property added successfully!";
+    setTimeout(() => {
+      router.push("/");
+    }, 2000);
+
     console.log("Property added successfully:", response.data);
   } catch (err) {
     console.error("Error response:", err.response ? err.response.data : err);
+    errorMessage.value = "Failed to add property. Please try again.";
   } finally {
-    router.push("/");
+    isLoading.value = false;
   }
 };
 
@@ -177,11 +191,17 @@ onMounted(() => {
       <h3>გარიგების ტიპი</h3>
       <div class="flex gap-10">
         <label for="forSale">
-          <input v-model="listingOptions" checked value="1" type="radio" />
+          <input
+            v-model="listingOptions"
+            checked
+            value="1"
+            type="radio"
+            id="forSale"
+          />
           იყიდება
         </label>
         <label for="forRent">
-          <input v-model="listingOptions" type="radio" value="0" />
+          <input v-model="listingOptions" type="radio" value="0" id="forRent" />
           ქირავდება
         </label>
       </div>
@@ -329,9 +349,11 @@ onMounted(() => {
         <button
           class="text-white px-2 py-2 border-solid border-2 rounded-lg bg-primary1 hover:bg-hoverColor2"
           type="submit"
+          @click="handleSubmit"
         >
           დამატე ლისტინგი
         </button>
+        <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
       </div>
     </form>
   </main>
