@@ -23,6 +23,7 @@ const listingDescription = ref("");
 const errorMessage = ref("");
 const selectedAgent = ref(null);
 const selectedFile = ref(null);
+const previewImage = ref(null);
 const isLoading = ref(false);
 const successMessage = ref("");
 
@@ -105,10 +106,18 @@ const handleFileChange = (event) => {
       errorMessage.value =
         "File size exceeds 2MB. Please upload a smaller image.";
       event.target.value = "";
+      selectedFile.value = null;
+      previewImage.value = null;
     } else {
       console.log("File ready for upload:", file);
       selectedFile.value = file;
       errorMessage.value = "";
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.value = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 };
@@ -310,7 +319,14 @@ onMounted(() => {
       <p class="text-sm"><i class="pi pi-check" /> მინიმუმ ხუთი სიტყვა</p>
       <h3 class="text-lg mb-4 mt-12">ატვირთე ფოტო *</h3>
       <div class="border-dashed border-2 rounded-md relative">
+        <img
+          v-if="previewImage"
+          :src="previewImage"
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-full max-h-full object-contain"
+          alt="Uploaded image preview"
+        />
         <i
+          v-if="!previewImage"
           class="pi pi-plus-circle absolute top-[50%] left-[50%] text-lg text-fileColor"
         />
         <input
