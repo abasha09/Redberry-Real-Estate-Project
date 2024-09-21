@@ -19,6 +19,7 @@ const agentPhone = ref("");
 const agentEmail = ref("");
 const agentImage = ref(null);
 const errorMessage = ref("");
+const previewImage = ref(null);
 
 const generateRandomId = () => {
   return Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
@@ -47,10 +48,18 @@ const handleFileChange = (event) => {
       errorMessage.value =
         "File size exceeds 2MB. Please upload a smaller image.";
       event.target.value = "";
+      agentImage.value = null;
+      previewImage.value = null;
     } else {
       console.log("File ready for upload:", file);
       agentImage.value = file;
       errorMessage.value = "";
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.value = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 };
@@ -99,6 +108,7 @@ const handleSubmit = async (e) => {
       }
     );
     console.log("Property added successfully:", response.data);
+    emit("close");
   } catch (err) {
     console.error("Error response:", err.response ? err.response.data : err);
   } finally {
@@ -167,7 +177,14 @@ const handleSubmit = async (e) => {
 
       <h3 class="text-lg mb-4 mt-12">ატვირთე ფოტო *</h3>
       <div class="border-dashed border-2 rounded-md relative">
+        <img
+          v-if="previewImage"
+          :src="previewImage"
+          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-full max-h-full object-contain"
+          alt="Uploaded image preview"
+        />
         <i
+          v-if="!previewImage"
           class="pi pi-plus-circle absolute top-[50%] left-[50%] text-lg text-fileColor"
         />
         <input

@@ -137,7 +137,7 @@ const handleSubmit = async (event) => {
   formData.append("area", listingArea.value);
   formData.append("description", listingDescription.value);
   formData.append("bedrooms", listingBedrooms.value);
-  formData.append("is_rental", listingOptions.value === "forRent" ? "1" : "0");
+  formData.append("is_rental", listingOptions.value === "1" ? "1" : "0");
   formData.append("city_id", selectedCity.value);
   formData.append("agent_id", selectedAgent.value);
   formData.append("region_id", selectedRegion.value);
@@ -203,14 +203,14 @@ onMounted(() => {
           <input
             v-model="listingOptions"
             checked
-            value="1"
+            value="0"
             type="radio"
             id="forSale"
           />
           იყიდება
         </label>
         <label for="forRent">
-          <input v-model="listingOptions" type="radio" value="0" id="forRent" />
+          <input v-model="listingOptions" type="radio" value="1" id="forRent" />
           ქირავდება
         </label>
       </div>
