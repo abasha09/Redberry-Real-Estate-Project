@@ -182,11 +182,14 @@ onMounted(async () => {
       </li>
     </ul>
     <section class="grid grid-cols-4 gap-5 p-10 px-28">
+      <p v-if="!filteredProperties.length" class="w-[504px] text-xl">
+        აღნიშნული მონაცემებით განცხადება არ იძებნება
+      </p>
       <PropertyCard
         v-for="property in filteredProperties"
         :key="property.id"
         :property="property"
-      ></PropertyCard>
+      />
     </section>
   </main>
 </template>
