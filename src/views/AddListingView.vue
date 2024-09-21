@@ -1,8 +1,12 @@
 <script setup>
 import { onMounted, ref, computed, watch } from "vue";
 import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
 
 const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
+
+const route = useRoute();
+const router = useRouter();
 
 const fetchedRegions = ref([]);
 const fetchedCities = ref([]);
@@ -19,22 +23,6 @@ const listingDescription = ref("");
 const errorMessage = ref("");
 const selectedAgent = ref(null);
 const selectedFile = ref(null);
-
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-
-  if (file) {
-    if (file.size > 2 * 1024 * 1024) {
-      errorMessage.value =
-        "File size exceeds 2MB. Please upload a smaller image.";
-      event.target.value = "";
-    } else {
-      console.log("File ready for upload:", file);
-      selectedFile.value = file;
-      errorMessage.value = "";
-    }
-  }
-};
 
 const fetchRegions = async () => {
   try {
@@ -112,6 +100,22 @@ const validateForm = () => {
 
 const generateRandomId = () => {
   return Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+};
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+
+  if (file) {
+    if (file.size > 2 * 1024 * 1024) {
+      errorMessage.value =
+        "File size exceeds 2MB. Please upload a smaller image.";
+      event.target.value = "";
+    } else {
+      console.log("File ready for upload:", file);
+      selectedFile.value = file;
+      errorMessage.value = "";
+    }
+  }
 };
 
 const handleSubmit = async (event) => {

@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
 const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
 
 const route = useRoute();
+
+const router = useRouter();
 
 const fetchedApartment = ref(null);
 
@@ -26,6 +28,26 @@ const fetchApartment = async () => {
     console.log("Fetched Apartment:", fetchedApartment.value);
   } catch (error) {
     console.error("Error fetching apartment data:", error);
+  }
+};
+
+const deleteProperty = async () => {
+  try {
+    const confirm = window.confirm("Are you sure you want to delete this job?");
+    if (confirm) {
+      await axios.delete(
+        `https://api.real-estate-manager.redberryinternship.ge/api/real-estates/${apartmentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            accept: "application/json",
+          },
+        }
+      );
+      router.push("/");
+    }
+  } catch (error) {
+    console.log("Error deleting property", error);
   }
 };
 
@@ -95,6 +117,7 @@ onMounted(() => {
           </div>
           <button
             class="border-solid border-2 rounded-lg px-3 py-2 mt-20 text-buttonColor border-buttonColor"
+            @click="deleteProperty"
           >
             ლისტინგის წაშლა
           </button>
