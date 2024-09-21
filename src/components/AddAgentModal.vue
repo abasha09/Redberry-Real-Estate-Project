@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 const token = "9d0245f7-ecfe-43ae-ba39-0eea3e28d26c";
 
@@ -9,6 +10,8 @@ const props = defineProps({
   isOpen: Boolean,
 });
 const submit = ref(true);
+
+const router = useRouter();
 
 const agentName = ref("");
 const agentSurname = ref("");

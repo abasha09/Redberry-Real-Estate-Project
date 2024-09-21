@@ -33,7 +33,7 @@ const fetchApartment = async () => {
 
 const deleteProperty = async () => {
   try {
-    const confirm = window.confirm("Are you sure you want to delete this job?");
+    const confirm = window.confirm("გსურთ წაშალოთ ლისტინგი?");
     if (confirm) {
       await axios.delete(
         `https://api.real-estate-manager.redberryinternship.ge/api/real-estates/${apartmentId}`,
